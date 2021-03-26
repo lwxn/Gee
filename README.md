@@ -303,3 +303,59 @@
    	group.engine.router.addRoute(method, pattern, handler)
    }
    ```
+
+### Chapter 5 中间件
+
+#### 中间件： 
+
+​	中间件可以理解为是开放接口给用户去实现一些功能，开放给用户的参数决定了功能的复杂性。
+
+<----------------------------!----------------------------->
+
+#### code:
+
+1. 首先新建一个logger.go, 定义一个可以记录处理时间长度的中间件：
+
+   ```
+   func Logger() HandlerFunc{
+   	return func(c *Context){
+   		t := time.Now()
+   		c.Next()
+   
+   		log.Printf("[%d] %s in %v",c.StatusCode,c.Req.RequestURI,time.Since(t))
+   	}
+   }
+   ```
+
+2. 修改context.go，context.go中包含请求信息。由于当执行到next时，会将控制权交给下一个中间件，因此需要执行剩下来的handle function。在执行完handle function之后，再退回来执行logger中间件剩下来的部分。
+
+   ```
+   func(c *Context)Next(){
+   	c.index++;
+   	fmt.Println("The len of the handlers:",len(c.handlers))
+   	s := len(c.handlers)
+   	for ;c.index < s;c.index++{
+   		c.handlers[c.index](c)
+   	}
+   }
+   ```
+
+   在RUN（）（ServeHTTP函数之中）：首先匹配一下有没有符合前缀路径的中间件，把它加载handler之中，然后再处理context之中的其他的请求，把剩下的handle function也加进来，然后进行c.next()来处理。
+
+   ```
+   //the logic of how to deal with the route
+   func (engine *Engine) ServeHTTP(w http.ResponseWriter,req *http.Request){
+      var middlewares []HandlerFunc
+      for _,group := range engine.groups{
+         if strings.HasPrefix(req.URL.Path,group.prefix){
+            middlewares = append(middlewares,group.middlewares...)
+         }
+      }
+   
+      c := NewContext(w,req)
+      c.handlers = middlewares
+      c.engine = engine
+      engine.router.handle(c)
+   }
+   ```
+
