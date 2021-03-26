@@ -115,6 +115,7 @@
         </entry>
       </map>
     </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>
@@ -128,29 +129,33 @@
       <screen x="0" y="0" width="1280" height="680" />
     </state>
     <state x="386" y="141" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1280.680@0.0.1280.680" timestamp="1616712071631" />
-    <state width="1237" height="163" key="GridCell.Tab.0.bottom" timestamp="1616712209827">
+    <state x="421" y="96" key="FileChooserDialogImpl" timestamp="1616718557163">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1237" height="163" key="GridCell.Tab.0.bottom/0.0.1280.680@0.0.1280.680" timestamp="1616712209827" />
-    <state width="1237" height="163" key="GridCell.Tab.0.center" timestamp="1616712209826">
+    <state x="421" y="96" key="FileChooserDialogImpl/0.0.1280.680@0.0.1280.680" timestamp="1616718557163" />
+    <state width="1237" height="163" key="GridCell.Tab.0.bottom" timestamp="1616720686570">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1237" height="163" key="GridCell.Tab.0.center/0.0.1280.680@0.0.1280.680" timestamp="1616712209826" />
-    <state width="1237" height="163" key="GridCell.Tab.0.left" timestamp="1616712209826">
+    <state width="1237" height="163" key="GridCell.Tab.0.bottom/0.0.1280.680@0.0.1280.680" timestamp="1616720686570" />
+    <state width="1237" height="163" key="GridCell.Tab.0.center" timestamp="1616720686569">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1237" height="163" key="GridCell.Tab.0.left/0.0.1280.680@0.0.1280.680" timestamp="1616712209826" />
-    <state width="1237" height="163" key="GridCell.Tab.0.right" timestamp="1616712209826">
+    <state width="1237" height="163" key="GridCell.Tab.0.center/0.0.1280.680@0.0.1280.680" timestamp="1616720686569" />
+    <state width="1237" height="163" key="GridCell.Tab.0.left" timestamp="1616720686568">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1237" height="163" key="GridCell.Tab.0.right/0.0.1280.680@0.0.1280.680" timestamp="1616712209826" />
+    <state width="1237" height="163" key="GridCell.Tab.0.left/0.0.1280.680@0.0.1280.680" timestamp="1616720686568" />
+    <state width="1237" height="163" key="GridCell.Tab.0.right" timestamp="1616720686570">
+      <screen x="0" y="0" width="1280" height="680" />
+    </state>
+    <state width="1237" height="163" key="GridCell.Tab.0.right/0.0.1280.680@0.0.1280.680" timestamp="1616720686570" />
     <state x="142" y="0" key="SettingsEditor" timestamp="1616638249381">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
     <state x="142" y="0" key="SettingsEditor/0.0.1280.680@0.0.1280.680" timestamp="1616638249380" />
-    <state x="303" y="1" width="672" height="678" key="search.everywhere.popup" timestamp="1616653579912">
+    <state x="303" y="1" width="672" height="678" key="search.everywhere.popup" timestamp="1616740240702">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state x="303" y="1" width="672" height="678" key="search.everywhere.popup/0.0.1280.680@0.0.1280.680" timestamp="1616653579912" />
+    <state x="303" y="1" width="672" height="678" key="search.everywhere.popup/0.0.1280.680@0.0.1280.680" timestamp="1616740240702" />
   </component>
 </project>

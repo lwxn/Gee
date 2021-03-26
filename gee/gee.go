@@ -1,12 +1,14 @@
 package gee
 
 import (
+	"fmt"
 	"html/template"
 	"net/http"
 	"path"
 	"strings"
 )
 
+//handlerFunc define the handler gee uses
 type HandlerFunc func(c *Context)
 
 type RouterGroup struct {
@@ -15,6 +17,15 @@ type RouterGroup struct {
 	parent *RouterGroup
 	engine *Engine
 }
+
+type Engine struct {
+	*RouterGroup
+	router *Router
+	groups []*RouterGroup
+	htmlTemplates *template.Template
+	funcMap template.FuncMap
+}
+
 
 func Default() *Engine {
 	engine := New()
@@ -33,15 +44,18 @@ func (group *RouterGroup) Group(prefix string)*RouterGroup{
 	return newGroup
 }
 
+//add routes
 func (group *RouterGroup) addRoute(method string,comp string,handler HandlerFunc){
 	pattern := group.prefix + comp
 	group.engine.router.addRoute(method,pattern,handler)
 }
 
+//deal with the get request
 func (group *RouterGroup) GET(pattern string,handler HandlerFunc){
 	group.addRoute("GET",pattern,handler)
 }
 
+//deal with the post request
 func (group *RouterGroup)POST(pattern string,handler HandlerFunc){
 	group.addRoute("POST",pattern,handler)
 }
@@ -50,8 +64,10 @@ func (group *RouterGroup) Use(middlewares ...HandlerFunc){
 	group.middlewares = append(group.middlewares,middlewares...);
 }
 
+
 func (group *RouterGroup) createStaticHandler(relativePath string,fs http.FileSystem) HandlerFunc{
 	absolutePath := path.Join(group.prefix,relativePath)
+	fmt.Println("absolutePath",absolutePath)
 	fileServer := http.StripPrefix(absolutePath,http.FileServer(fs))
 	return func(c *Context) {
 		file := c.Params["filepath"]
@@ -75,13 +91,6 @@ func (group *RouterGroup) Static (relativePath string,root string){
 
 
 
-type Engine struct {
-	*RouterGroup
-	router *Router
-	groups []*RouterGroup
-	htmlTemplates *template.Template
-	funcMap template.FuncMap
-}
 
 func New() *Engine{
 	engine := &Engine{
@@ -105,6 +114,7 @@ func (engine *Engine) POST(pattern string, handler HandlerFunc){
 	engine.router.addRoute("POST",pattern,handler)
 }
 
+//start a http server
 func (engine *Engine) RUN(port string)(err error){
 	return http.ListenAndServe(port,engine)
 }
@@ -117,6 +127,7 @@ func (engine *Engine)LoadHTMLGlob(pattern string){
 	engine.htmlTemplates = template.Must(template.New("").Funcs(engine.funcMap).ParseGlob(pattern))
 }
 
+//the logic of how to deal with the route
 func (engine *Engine) ServeHTTP(w http.ResponseWriter,req *http.Request){
 	var middlewares []HandlerFunc
 	for _,group := range engine.groups{

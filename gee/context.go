@@ -30,7 +30,7 @@ func (c *Context) Fail(code int, err string) {
 }
 
 
-func newContext(w http.ResponseWriter, req *http.Request) *Context{
+func NewContext(w http.ResponseWriter, req *http.Request) *Context{
 	return &Context{
 		Path : req.URL.Path,
 		Method: req.Method,
@@ -42,6 +42,7 @@ func newContext(w http.ResponseWriter, req *http.Request) *Context{
 
 func(c *Context)Next(){
 	c.index++;
+	fmt.Println("The len of the handlers:",len(c.handlers))
 	s := len(c.handlers)
 	for ;c.index < s;c.index++{
 		c.handlers[c.index](c)
@@ -53,16 +54,6 @@ func (c *Context)Param(key string)string{
 	return value
 }
 
-
-
-func NewContext(w http.ResponseWriter, req *http.Request) *Context{
-	return &Context{
-		Writer: w,
-		Req: req,
-		Path: req.URL.Path,
-		Method: req.Method,
-	}
-}
 
 func (c *Context) PostForm(key string) string{
 	return c.Req.FormValue(key)
@@ -108,3 +99,9 @@ func (c *Context) HTML(code int, name string,data interface{}) {
 		c.Fail(500,err.Error())
 	}
 }
+//
+//func (c *Context) HTML(code int, html string) {
+//	c.SetHeader("Content-Type", "text/html")
+//	c.Status(code)
+//	c.Writer.Write([]byte(html))
+//}

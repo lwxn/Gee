@@ -61,7 +61,7 @@ func (r *Router) getRoute(method string,path string)(*node,map[string]string){
 
 	fmt.Println("---------",searchParts)
 	n := root.search(searchParts,0)
-	fmt.Println(n)
+	fmt.Println(n.pattern,n.part,n.isWild)
 	if n != nil{
 		parts := parsePattern(n.pattern)
 		for i,part := range parts{

@@ -57,6 +57,8 @@ func (n *node) insert(pattern string,parts []string,height int)  {
 
 func (n *node) search(parts []string,height int)*node{
 	if(len(parts) == height || strings.HasPrefix(n.part,"*")){
+		fmt.Println("height:",height)
+		fmt.Println("pattern:",n.pattern)
 		if n.pattern == ""{
 			return nil
 		} else{
@@ -66,7 +68,6 @@ func (n *node) search(parts []string,height int)*node{
 
 	part := parts[height]
 	children := n.matchChildren(part)
-	fmt.Println(len(children))
 	for _,child := range children{
 		result := child.search(parts,height+1)
 		if result != nil{
