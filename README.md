@@ -359,3 +359,109 @@
    }
    ```
 
+### Chapter 6 HTML模板处理
+
+1. 首先需要把路由路径映射为本地存放对应的web资源的文件夹路径。
+
+   ```
+   // serve static files
+   func (group *RouterGroup) Static(relativePath string, root string) {
+   	handler := group.createStaticHandler(relativePath, http.Dir(root))
+   	urlPattern := path.Join(relativePath, "/*filepath")
+   	// Register GET handlers
+   	group.GET(urlPattern, handler)
+   }
+   ```
+
+   ```
+   // create static handler
+   func (group *RouterGroup) createStaticHandler(relativePath string, fs http.FileSystem) HandlerFunc {
+   	absolutePath := path.Join(group.prefix, relativePath)
+   	fileServer := http.StripPrefix(absolutePath, http.FileServer(fs))
+   	return func(c *Context) {
+   		file := c.Param("filepath")
+   		// Check if file exists and/or if we have permission to access it
+   		if _, err := fs.Open(file); err != nil {
+   			c.Status(http.StatusNotFound)
+   			return
+   		}
+   
+   		fileServer.ServeHTTP(c.Writer, c.Req)
+   	}
+   }
+   ```
+
+   这句是最关键的一句，假设absolutepath为/tmp, fs代表/home，那么如果传来一个文件/tmp/a/1.txt，经过这句之后，会把tmp删除，然后接上/home，变成/home/a/1.txt
+
+   ```
+   fileServer := http.StripPrefix(absolutePath,http.FileServer(fs))
+   ```
+
+### Chapter 7: 错误处理
+
+1.recover相当于Java中的catche，可以捕获错误之后继续执行剩下的代码。
+
+2.新增中间件recovery.go：trace函数是用来打印堆栈的信息的。
+
+```
+func Recovery() HandlerFunc{
+   return func(c *Context) {
+      defer func() {
+         if err := recover();err != nil{
+            message := fmt.Sprintf("%s",err)
+            log.Printf("%s\n\n",trace(message))
+            c.Fail(http.StatusInternalServerError,"Internal server error")
+         }
+      }()
+      c.Next()
+   }
+}
+```
+
+3. 调用r.Default()，默认增加logger和recovery两个中间件，然后向下执行.
+
+   ```
+   func Default() *Engine {
+      engine := New()
+      engine.Use(Logger(), Recovery())
+      return engine
+   }
+   ```
+
+### 使用
+
+```
+go run main.go
+```
+
+再打开一个terminal:
+
+```
+curl "http://localhost:9999/panic"
+curl "http://localhost:9999/"
+```
+
+打印出了错误信息：
+
+```
+2021/03/26 15:31:29 runtime error: index out of range [100] with length 1
+traceBack:
+        D:/software/go/src/runtime/panic.go:969
+        D:/software/go/src/runtime/panic.go:88
+        F:/project/goland/src/Gee/main.go:28
+        F:/project/goland/src/Gee/gee/context.go:47
+        F:/project/goland/src/Gee/gee/recovery.go:35
+        F:/project/goland/src/Gee/gee/context.go:47
+        F:/project/goland/src/Gee/gee/logger.go:16
+        F:/project/goland/src/Gee/gee/context.go:47
+        F:/project/goland/src/Gee/gee/router.go:93
+        F:/project/goland/src/Gee/gee/gee.go:143
+        D:/software/go/src/net/http/server.go:2844
+        D:/software/go/src/net/http/server.go:1926
+        D:/software/go/src/runtime/asm_amd64.s:1375
+
+2021/03/26 15:31:29 [500] /panic in 121.9943ms
+......
+2021/03/26 15:32:49 [200] / in 0s
+```
+
